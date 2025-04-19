@@ -1,6 +1,8 @@
 import random
+import os
+from colorama import Fore, Style
 
-LENGTH_OF_SHIPS = [2,3,3,4,5]  
+LENGTH_OF_SHIPS = [2,3,3,4]  
 PLAYER_BOARD = [[" "] * 8 for i in range(8)]
 COMPUTER_BOARD = [[" "] * 8 for i in range(8)]
 PLAYER_GUESS_BOARD = [[" "] * 8 for i in range(8)]
@@ -50,16 +52,18 @@ def place_ships(board):
                 row, column, orientation = user_input(place_ship)
                 if check_ship_fit(ship_length, row, column, orientation):
                     #check if ship overlaps
-                        if ship_overlaps(board, row, column, orientation, ship_length) == False:
-                            #place ship
-                            if orientation == "H":
-                                for i in range(column, column + ship_length):
-                                    board[row][i] = "X"
-                            else:
-                                for i in range(row, row + ship_length):
-                                    board[i][column] = "X"
-                            print_board(PLAYER_BOARD)
-                            break 
+                    if ship_overlaps(board, row, column, orientation, ship_length) == False:
+                        #place ship
+                        if orientation == "H":
+                            for i in range(column, column + ship_length):
+                                board[row][i] = "X"
+                        else:
+                            for i in range(row, row + ship_length):
+                                board[i][column] = "X"
+                        clear_terminal()
+                        print_board(PLAYER_BOARD)
+                        break
+    clear_terminal()
 
 #check if ship fits in board
 def check_ship_fit(SHIP_LENGTH, row, column, orientation):
@@ -130,7 +134,7 @@ def user_input(place_ship):
                     break
             except KeyError:
                 print('Enter a valid letter between A-H')
-        return row, column        
+        return row, column      
 
 #check if all ships are hit
 def count_hit_ships(board):
@@ -164,8 +168,11 @@ def turn(board):
         else:
             board[row][column] = "-"
 
+def clear_terminal():
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 place_ships(COMPUTER_BOARD)
-print_board(COMPUTER_BOARD)
+# print_board(COMPUTER_BOARD)
 print_board(PLAYER_BOARD)
 place_ships(PLAYER_BOARD)
         
@@ -182,7 +189,8 @@ while True:
     #computer turn
     while True:
         turn(COMPUTER_GUESS_BOARD)
-        break           
+        break
+    clear_terminal()           
     print_board(COMPUTER_GUESS_BOARD)   
     if count_hit_ships(COMPUTER_GUESS_BOARD) == 17:
         print("Sorry, the computer won.")
