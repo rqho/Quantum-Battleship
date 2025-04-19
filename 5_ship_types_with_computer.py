@@ -117,7 +117,7 @@ def place_ships(board):
             else:
                 if (first_ship_placed == False):
                     print('Place the ship with a length of ' + str(ship_length))
-                    row, column, orientation, prob = user_input(True)
+                    row, column, orientation, prob = user_input("Place first ship")
                     if check_ship_fit(ship_length, row, column, orientation):
                         #check if ship overlaps
                         if ship_overlaps(board, row, column, orientation, ship_length) == False:
@@ -137,7 +137,7 @@ def place_ships(board):
             
                 if (first_ship_placed == True):
                     print('Place the superposition ship with a length of ' + str(ship_length))
-                    row_s, column_s, orientation_s = user_input(False)
+                    row_s, column_s, orientation_s = user_input("Place superposition ship")
                     prob_s = 100 - prob
                     if check_ship_fit(ship_length, row_s, column_s, orientation_s):
                         #check if ship overlaps
@@ -195,10 +195,8 @@ def ship_overlaps(board, row, column, orientation, ship_length):
     return False
 
 
-def user_input(place_ship):
-    # place_ship = True for first ship
-    # place_ship = False for superposition ship
-    if place_ship == True:
+def user_input(task):
+    if task == "Place first ship":
         while True:
             try: 
                 orientation = input("Enter orientation (H or V): ").upper()
@@ -232,7 +230,7 @@ def user_input(place_ship):
             except ValueError:
                 print('Enter a valid number between 1-99')
         return row, column, orientation, prob 
-    else:
+    elif task == "Place superposition ship":
         while True:
             try: 
                 orientation = input("Enter orientation (H or V): ").upper()
@@ -257,6 +255,24 @@ def user_input(place_ship):
             except KeyError:
                 print('Enter a valid letter between A-H')
         return row, column, orientation
+    elif task == "Guess":
+        while True:
+            try: 
+                row = input("Enter the row 1-8 of the ship: ")
+                if row in '12345678':
+                    row = int(row) - 1
+                    break
+            except ValueError:
+                print('Enter a valid number between 1-8')
+        while True:
+            try: 
+                column = input("Enter the column of the ship: ").upper()
+                if column in 'ABCDEFGH':
+                    column = LETTERS_TO_NUMBERS[column]
+                    break
+            except KeyError:
+                print('Enter a valid letter between A-H')
+        return row, column
 
 #check if all ships are hit
 def count_hit_ships(board):
@@ -270,14 +286,18 @@ def count_hit_ships(board):
 #user and computer turn
 def turn(board):
     if board == PLAYER_GUESS_BOARD:
-        row, column = user_input(PLAYER_GUESS_BOARD)
+        row, column = user_input("Guess")
         if board[row][column] == "-":
+            print("You already guessed that location.")
             turn(board)
         elif board[row][column] == "X":
+            print("You already guessed that location.")
             turn(board)
         elif COMPUTER_BOARD[row][column] == "X":
+            print("You hit a ship!")
             board[row][column] = "X"
         else:
+            print("You missed.")
             board[row][column] = "-"
     else:
         row, column = random.randint(0,7), random.randint(0,7)
